@@ -21,7 +21,7 @@
                             <div class="row MarginTopStyle">
                                 <div class="col-lg-6">
                                     <button type="button" data-toggle="modal"  data-target="#addZoneModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
-                                    <button ng-if="zonelist.length != '0'" type="button" class="btn btn-primary" ng-click="openzoneModal()"><i class="fa fa-edit"></i> Edit</button>
+                                    <button ng-if="zonelist.length != '0'" type="button" class="btn btn-primary" ng-click="openZoneModal()"><i class="fa fa-edit"></i> Edit</button>
                                     <button ng-if="zonelist.length != '0'" type="button" class="btn btn-danger" ng-click="delZone()"><i class="fa fa-trash"></i> Delete</button>
                                 </div>
                                 <div class="col-lg-6">
@@ -30,7 +30,7 @@
                                             <input ng-model="q" id="search" class="form-control" placeholder="Search">
                                         </div>
                                         <div class="col-lg-6">
-                                            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                            <input type="number" min="1" max="100" class="form-control" ng-model="zonepageSize">
                                         </div>
                                     </div>
                                 </div>
@@ -47,7 +47,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr dir-paginate="zone in zonelist | filter:q | itemsPerPage: pageSize" current-page="currentPage" pagination-id="zonePagination">
+                                        <tr dir-paginate="zone in zonelist | filter:q | itemsPerPage: zonepageSize" current-page="currentPage" pagination-id="zonePagination">
                                             <td><input type="checkbox" ng-model="zone.selected" ng-change="optionToggled(zonelist)" value="{$ zone.id $}" /></td>
                                             <td>{$ zone.fields.name $}</td>
                                             <td>{$ zone.fields.city $}</td>
@@ -101,10 +101,10 @@
                                 <div class="col-lg-6">
                                     <div class="pull-right">
                                         <div class="col-lg-6">
-                                            <input ng-model="q" id="search" class="form-control" placeholder="Search">
+                                            <input ng-model="q" id="searchsch" class="form-control" placeholder="Search">
                                         </div>
                                         <div class="col-lg-6">
-                                            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                            <input type="number" min="1" max="100" class="form-control" ng-model="schpageSize">
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr dir-paginate="sch in schlist | filter:q | itemsPerPage: pageSize" current-page="currentPage" pagination-id="schPagination">
+                                        <tr dir-paginate="sch in schlist | filter:q | itemsPerPage: schpageSize" current-page="currentPage" pagination-id="schPagination">
                                             <td><input type="checkbox" ng-model="sch.selected" ng-change="optionToggled(schlist)" value="{$ sch.id $}" /></td>
                                             <td>{$ sch.fields.name $}</td>
                                             <td>{$ sch.fields.address $}</td>
@@ -184,7 +184,7 @@
                                             <input ng-model="q" id="searchstu" class="form-control" placeholder="Search">
                                         </div>
                                         <div class="col-lg-6">
-                                            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                            <input type="number" min="1" max="100" class="form-control" ng-model="stupageSize">
                                         </div>
                                     </div>
                                 </div>
@@ -197,20 +197,25 @@
                                         <tr>
                                             <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check" /></th>
                                             <th>Name</th>
+                                            <th>Student ID</th>
                                             <th>Class</th>
+                                            <th>D.O.B</th>
+                                            <th>Gender</th>
+                                            <th>Address</th>
+                                            <th>Emergency Contact</th>
                                             <th>School</th>
-                                            <th>ph</th>
-                                            <th>Father</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr dir-paginate="stu in stulist | filter:q | itemsPerPage: pageSize" current-page="currentPage" pagination-id="stuPagination">
+                                        <tr dir-paginate="stu in stulist | filter:q | itemsPerPage: stupageSize" current-page="currentPage" pagination-id="stuPagination">
                                             <td><input type="checkbox" ng-model="sch.selected" ng-change="optionToggled(stulist)" value="{$ stu.id $}" /></td>
                                             <td>{$ stu.fields.name $}</td>
-                                            <td>{$ stu.fields.address $}</td>
-                                            <td>{$ stu.fields.level $}</td>
-                                            <td>{$ stu.fields.code $}</td>
-                                            <td>{$ stu.fields.zone $}</td>
+                                            <td>{$ stu.fields.stu_id $}</td>
+                                            <td>{$ stu.fields.standard $}</td>
+                                            <td>{$ stu.fields.dob $}</td>
+                                            <td>{$ stu.fields.gender $}</td>
+                                            <td>{$ stu.fields.emergency_contact $}</td>
+                                            <td>{$ stu.fields.school_id $}</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -267,11 +272,52 @@
     </div>
 </div>
 <!-- /#page-content-wrapper -->
-
-<!-- Add Modal -->
-<div id="addSchModal" class="modal fade" role="dialog">
+<!-- Add Zone Modal -->
+<div id="addZoneModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Zone</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-school" name="zoneform" novalidate="">
+                    {% input_text name='zname' ngmodel='zone.name' classname='form-control' placename='Zone Name' fieldname='Zone Name' formname='zoneform' type='text' %}
+                    {% input_text name='zcity' ngmodel='zone.city' classname='form-control' placename='City' fieldname='City' formname='zoneform' type='text' %}
+                    <button ng-click="addZone(zone)" ng-disabled="zoneform.$invalid" class="btn btn-default">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="zoneform.$setPristine();zoneform.$setUntouched();zoneform.$submitted = false;">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Edit Zone Modal -->
+<script type="text/ng-template" id="zoneEditModal">
+    <div  click-outside="cancel()">
+        <div class="modal-header">
+            <h4 class="modal-title">Edit Zone</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-sch" name="zoneeditform" novalidate="">
+                {% input_text name='ezonename' ngmodel='editZone.name' classname='form-control' placename='Zone Name' fieldname='Zone Name' formname='zoneeditform' type='text' %}
+                {% input_text name='ezonecity' ngmodel='editZone.city' classname='form-control' placename='City' fieldname='City' formname='zoneeditform' type='text' %}
+                <button ng-click="updateZone(editZone);editZone.reset()" ng-disabled="zoneeditform.$invalid" class="btn btn-default">Update</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+        </div>
+    </div>
+</script>
+
+<!-- Add School Modal -->
+<div id="addSchModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -296,14 +342,14 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="schform.$setPristine();vmfrom.$setUntouched();schform.$submitted = false;">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="schform.$setPristine();schform.$setUntouched();schform.$submitted = false;">Close</button>
             </div>
         </div>
 
     </div>
 </div>
-<!-- Edit Modal -->
-<script type="text/ng-template" id="schEditModal.html">
+<!-- Edit School Modal -->
+<script type="text/ng-template" id="schEditModal">
     <div  click-outside="cancel()">
         <div class="modal-header">
             <h4 class="modal-title">Edit School</h4>
@@ -324,6 +370,62 @@
                     <span ng-show="ezone.$submitted || scheditform.ezone.$touched"><span ng-show="scheditform.ezone.$error.required">* Zone Required</span></span>
                 </div>
                 <button ng-click="updateSch(editSch);editSch.reset()" ng-disabled="scheditform.$invalid" class="btn btn-default">Update</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+        </div>
+    </div>
+</script>
+
+<!-- Add Zone Modal -->
+<div id="addStuModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Student</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-school" name="stuform" novalidate="">
+                    {% input_text name='name' ngmodel='stu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stuform' type='text' %}
+                    {% input_text name='sid' ngmodel='stu.sid' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stuform' type='text' %}
+                    {% input_text name='class' ngmodel='stu.class' classname='form-control' placename='Student Class' fieldname='Student Class' formname='stuform' type='text' %}
+                    {% input_text name='dob' ngmodel='stu.dob' classname='form-control' placename='Date of Birth' fieldname='Date of Birth' formname='stuform' type='text' %}
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="radio" ng-model="stu.gender" value=0> Male
+                        <input type="radio" ng-model="stu.gender" value=1> Female
+                      </label><br/>
+                    </div>
+                    {% input_text name='name' ngmodel='stu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stuform' type='text' %}
+                    {% input_text name='sid' ngmodel='stu.sid' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stuform' type='text' %}
+                    {% input_text name='name' ngmodel='stu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stuform' type='text' %}
+                    {% input_text name='sid' ngmodel='stu.sid' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stuform' type='text' %}
+
+                    <button ng-click="addStudent(stu)" ng-disabled="stuform.$invalid" class="btn btn-default">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="zoneform.$setPristine();zoneform.$setUntouched();zoneform.$submitted = false;">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Edit Student Modal -->
+<script type="text/ng-template" id="stuEditModal">
+    <div  click-outside="cancel()">
+        <div class="modal-header">
+            <h4 class="modal-title">Edit Zone</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-sch" name="zoneeditform" novalidate="">
+                {% input_text name='ezonename' ngmodel='editZone.name' classname='form-control' placename='Zone Name' fieldname='Zone Name' formname='zoneeditform' type='text' %}
+                {% input_text name='ezonecity' ngmodel='editZone.city' classname='form-control' placename='City' fieldname='City' formname='zoneeditform' type='text' %}
+                <button ng-click="updateZone(editZone);editZone.reset()" ng-disabled="zoneeditform.$invalid" class="btn btn-default">Update</button>
             </form>
         </div>
         <div class="modal-footer">

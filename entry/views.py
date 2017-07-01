@@ -8,6 +8,66 @@ from django.http import HttpResponse
 def zones(request):
     return render(request, 'entry/data.html')
 
+def getZone(request):
+    if request.method == 'GET':
+        zone_data = zone.objects.all().order_by('-id')
+        zones = serializers.serialize('json', zone_data)
+        return HttpResponse(zones, content_type='application/json')
+    else:
+        return HttpResponse('Invalid Method')
+
+def addZone(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        name = data.get('name')
+        city = data.get('city')
+        addzone = zone(name=name, city=city)
+        addzone.save()
+        if addzone:
+            return HttpResponse("Success")
+        else:
+            return HttpResponse("Failed")
+    else:
+        return HttpResponse('Invalid Method')
+
+def editZone(request):
+    if request.method == 'POST':
+        edata = json.loads(request.body.decode('utf-8'))
+        z_id = int(edata.get('eid'))
+        data = edata.get('editzone')
+        ed_name = data.get('name')
+        ed_city = data.get('city')
+        edZone = zone.objects.filter(id=z_id).update(name=ed_name, city=ed_city)
+        if edZone:
+            return HttpResponse('Success')
+        else:
+            return HttpResponse('Failed')
+    else:
+        return HttpResponse('Invalid Method')
+
+def getZonebaseID(request):
+    if request.method == 'GET':
+        z_id = request.GET.get('id')
+        zo = zone.objects.filter(id=z_id)
+        zonedata = serializers.serialize('json', zo)
+        return HttpResponse(zonedata, content_type='application/json')
+    else:
+        return HttpResponse('Invalid Method')
+
+
+def delZone(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        ids = json.loads(data.get('id'))
+        for id in ids:
+            delzone = zone.objects.filter(id=id).delete()
+        if delzone:
+            return HttpResponse('Success')
+        else:
+            return HttpResponse('Failed')
+    else:
+        return HttpResponse('Invalid Method')
+
 def getSchool(request):
     if request.method == 'GET':
         sch_data = school.objects.all().order_by('-id')
@@ -71,14 +131,6 @@ def delSchool(request):
     else:
         return HttpResponse('Invalid Method')
 
-def getZone(request):
-    if request.method == 'GET':
-        zone_data = zone.objects.all().order_by('-id')
-        zones = serializers.serialize('json',zone_data)
-        return HttpResponse(zones, content_type='application/json')
-    else:
-        return HttpResponse('Invalid Method')
-
 def getStudent(request):
     if request.method == 'GET':
         stu_data = student.objects.all().order_by('-id')
@@ -87,9 +139,61 @@ def getStudent(request):
     else:
         return HttpResponse('Invalid Method')
 
-def json_serial(obj):
-    """JSON serializer for objects not serializable by default json code"""
-    if isinstance(obj, datetime):
-        serial = obj.isoformat()
-        return serial
-    raise TypeError("Type not serializable")
+def addStudent(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        name = data.get('name')
+        stu_id = data.get('city')
+        standard = data.get('city')
+        dob = data.get('city')
+        gender = data.get('city')
+        address = data.get('city')
+        emergency_contact = data.get('city')
+        school_id = data.get('city')
+        addstu = student(name=name, stu_id=stu_id, standard=standard,dob=dob,gender=gender,address=address,emergency_contact=emergency_contact,school_id=school_id)
+        addstu.save()
+        if addstu:
+            return HttpResponse("Success")
+        else:
+            return HttpResponse("Failed")
+    else:
+        return HttpResponse('Invalid Method')
+
+def editStudent(request):
+    if request.method == 'POST':
+        edata = json.loads(request.body.decode('utf-8'))
+        z_id = int(edata.get('eid'))
+        data = edata.get('editzone')
+        ed_name = data.get('name')
+        ed_city = data.get('city')
+        edStu = student.objects.filter(id=z_id).update(name=ed_name, city=ed_city)
+        if edStu:
+            return HttpResponse('Success')
+        else:
+            return HttpResponse('Failed')
+    else:
+        return HttpResponse('Invalid Method')
+
+def getStubaseID(request):
+    if request.method == 'GET':
+        stu_id = request.GET.get('id')
+        stu = student.objects.filter(id=stu_id)
+        studata = serializers.serialize('json', stu)
+        return HttpResponse(studata, content_type='application/json')
+    else:
+        return HttpResponse('Invalid Method')
+
+
+def delStudent(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        ids = json.loads(data.get('id'))
+        for id in ids:
+            delstu = student.objects.filter(id=id).delete()
+        if delstu:
+            return HttpResponse('Success')
+        else:
+            return HttpResponse('Failed')
+    else:
+        return HttpResponse('Invalid Method')
+

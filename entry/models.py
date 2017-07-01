@@ -2,7 +2,7 @@ from django.db import models
 
 class zone(models.Model):
     name = models.TextField(null=True,default='null')
-    city = models.TextField(null=True, default='null')
+    city = models.TextField(null=True,default='null')
     date = models.DateTimeField(auto_now=True, blank=True)
 
 class school(models.Model):
