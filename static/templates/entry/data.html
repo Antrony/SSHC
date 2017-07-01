@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load form_fields %}
+{% block content %}
+<!-- Page Content -->
+<span ng-controller="dataCtrl">
+<div id="page-content-wrapper">
+    <div class="container-fluid xyz">
+        <div class="row">
+            <div class="col-lg-12">
+                    <div class="content-wrapper">
+                    <div id="page-wrapper">
+                    <div class="container-fluid TopAlignStyles">
+                    <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#zones">Zones</a></li>
+                    <li><a data-toggle="tab" href="#school">Schools</a></li>
+                    <li><a data-toggle="tab" href="#student">Students</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="zones" class="tab-pane fade in active">
+                            <div class="row MarginTopStyle">
+                                <div class="col-lg-6">
+                                    <button type="button" data-toggle="modal"  data-target="#addZoneModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
+                                    <button ng-if="zonelist.length != '0'" type="button" class="btn btn-primary" ng-click="openzoneModal()"><i class="fa fa-edit"></i> Edit</button>
+                                    <button ng-if="zonelist.length != '0'" type="button" class="btn btn-danger" ng-click="delZone()"><i class="fa fa-trash"></i> Delete</button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="pull-right">
+                                        <div class="col-lg-6">
+                                            <input ng-model="q" id="search" class="form-control" placeholder="Search">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div ng-if="zonelist.length != '0'" class="col-lg-12" style="overflow-x:auto;">
+                                    <table class="table table-bordered table-responsive table-hover tableNewStyles" ng-init="getZone()">
+                                        <thead>
+                                        <tr>
+                                            <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check"/></th>
+                                            <th>Name</th>
+                                            <th>City</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr dir-paginate="zone in zonelist | filter:q | itemsPerPage: pageSize" current-page="currentPage" pagination-id="zonePagination">
+                                            <td><input type="checkbox" ng-model="zone.selected" ng-change="optionToggled(zonelist)" value="{$ zone.id $}" /></td>
+                                            <td>{$ zone.fields.name $}</td>
+                                            <td>{$ zone.fields.city $}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div ng-if="zonelist.length == '0'" class="col-lg-12">
+                                    <h2 align="center">No Data</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                  <div class="col-xs-12 other-controller">
+                                        <div class="text-center">
+                                              <dir-pagination-controls boundary-links="true" pagination-id="zonePagination">
+                                                  <ul class="pagination" ng-if="1 < pages.length">
+                                                    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+                                                        <a href="" ng-click="setCurrent(1)">&laquo;</a>
+                                                    </li>
+                                                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"
+                                                        class="ng-scope">
+                                                        <a href="" ng-click="setCurrent(pagination.current - 1)" class="ng-binding">‹</a>
+                                                    </li>
+                                                    <li ng-repeat="pageNumber in pages track by $index"
+                                                        ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+                                                        <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+                                                    </li>
+
+                                                    <li ng-if="directionLinks"
+                                                        ng-class="{ disabled : pagination.current == pagination.last }"
+                                                        class="ng-scope">
+                                                        <a href="" ng-click="setCurrent(pagination.current + 1)" class="ng-binding">›</a>
+                                                    </li>
+                                                    <li ng-if="boundaryLinks"
+                                                        ng-class="{ disabled : pagination.current == pagination.last }">
+                                                        <a href="" ng-click="setCurrent(pagination.last)">&raquo;</a>
+                                                    </li>
+                                                </ul>
+                                              </dir-pagination-controls>
+                                        </div>
+                                  </div>
+                            </div>
+                        </div>
+                        <div id="school" class="tab-pane fade">
+                            <div class="row MarginTopStyle">
+                                <div class="col-lg-6">
+                                    <button type="button" data-toggle="modal"  data-target="#addSchModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
+                                    <button ng-if="schlist.length != '0'" type="button" class="btn btn-primary" ng-click="openSchModal()"><i class="fa fa-edit"></i> Edit</button>
+                                    <button ng-if="schlist.length != '0'" type="button" class="btn btn-danger" ng-click="delSchool()"><i class="fa fa-trash"></i> Delete</button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="pull-right">
+                                        <div class="col-lg-6">
+                                            <input ng-model="q" id="search" class="form-control" placeholder="Search">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div ng-if="schlist.length != '0'" class="col-lg-12" style="overflow-x:auto;">
+                                    <table class="table table-bordered table-responsive table-hover tableNewStyles" ng-init="getSchool()">
+                                        <thead>
+                                        <tr>
+                                            <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check" /></th>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>Level</th>
+                                            <th>Code</th>
+                                            <th>Zone</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr dir-paginate="sch in schlist | filter:q | itemsPerPage: pageSize" current-page="currentPage" pagination-id="schPagination">
+                                            <td><input type="checkbox" ng-model="sch.selected" ng-change="optionToggled(schlist)" value="{$ sch.id $}" /></td>
+                                            <td>{$ sch.fields.name $}</td>
+                                            <td>{$ sch.fields.address $}</td>
+                                            <td>{$ sch.fields.level $}</td>
+                                            <td>{$ sch.fields.code $}</td>
+                                            <td>{$ sch.fields.zone_id $}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div ng-if="schlist.length == '0'" class="col-lg-12">
+                                    <h2 align="center">No Data</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                  <div class="col-xs-12 other-controller">
+                                        <div class="text-center">
+                                              <dir-pagination-controls boundary-links="true" pagination-id="schPagination">
+                                                  <ul class="pagination" ng-if="1 < pages.length">
+                                                    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+                                                        <a href="" ng-click="setCurrent(1)">&laquo;</a>
+                                                    </li>
+                                                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"
+                                                        class="ng-scope">
+                                                        <a href="" ng-click="setCurrent(pagination.current - 1)" class="ng-binding">‹</a>
+                                                    </li>
+                                                    <li ng-repeat="pageNumber in pages track by $index"
+                                                        ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+                                                        <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+                                                    </li>
+
+                                                    <li ng-if="directionLinks"
+                                                        ng-class="{ disabled : pagination.current == pagination.last }"
+                                                        class="ng-scope">
+                                                        <a href="" ng-click="setCurrent(pagination.current + 1)" class="ng-binding">›</a>
+                                                    </li>
+                                                    <li ng-if="boundaryLinks"
+                                                        ng-class="{ disabled : pagination.current == pagination.last }">
+                                                        <a href="" ng-click="setCurrent(pagination.last)">&raquo;</a>
+                                                    </li>
+                                                </ul>
+                                              </dir-pagination-controls>
+                                        </div>
+                                  </div>
+                            </div>
+                        </div>
+                        <div id="student" class="tab-pane fade">
+                            <div class="row MarginTopStyle">
+                                <div class="col-lg-6">
+                                    <button type="button" data-toggle="modal"  data-target="#addStuModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
+                                    <button ng-if="stulist.length != '0'" type="button" class="btn btn-primary" ng-click="openStuModal()"><i class="fa fa-edit"></i> Edit</button>
+                                    <button ng-if="stulist.length != '0'" type="button" class="btn btn-danger" ng-click="delStudent()"><i class="fa fa-trash"></i> Delete</button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="pull-right">
+                                        <div class="col-lg-6">
+                                            <input ng-model="q" id="searchstu" class="form-control" placeholder="Search">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="number" min="1" max="100" class="form-control" ng-model="pageSize">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div ng-if="stulist.length != '0'" class="col-lg-12" style="overflow-x:auto;">
+                                    <table class="table table-bordered table-responsive table-hover tableNewStyles" ng-init="getStudent()">
+                                        <thead>
+                                        <tr>
+                                            <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check" /></th>
+                                            <th>Name</th>
+                                            <th>Class</th>
+                                            <th>School</th>
+                                            <th>ph</th>
+                                            <th>Father</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr dir-paginate="stu in stulist | filter:q | itemsPerPage: pageSize" current-page="currentPage" pagination-id="stuPagination">
+                                            <td><input type="checkbox" ng-model="sch.selected" ng-change="optionToggled(stulist)" value="{$ stu.id $}" /></td>
+                                            <td>{$ stu.fields.name $}</td>
+                                            <td>{$ stu.fields.address $}</td>
+                                            <td>{$ stu.fields.level $}</td>
+                                            <td>{$ stu.fields.code $}</td>
+                                            <td>{$ stu.fields.zone $}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div ng-if="stulist.length == '0'" class="col-lg-12">
+                                    <h2 align="center">No Data</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                  <div class="col-xs-12 other-controller">
+                                        <div class="text-center">
+                                              <dir-pagination-controls boundary-links="true" pagination-id="stuPagination">
+                                                  <ul class="pagination" ng-if="1 < pages.length">
+                                                    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+                                                        <a href="" ng-click="setCurrent(1)">&laquo;</a>
+                                                    </li>
+                                                    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"
+                                                        class="ng-scope">
+                                                        <a href="" ng-click="setCurrent(pagination.current - 1)" class="ng-binding">‹</a>
+                                                    </li>
+                                                    <li ng-repeat="pageNumber in pages track by $index"
+                                                        ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+                                                        <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+                                                    </li>
+
+                                                    <li ng-if="directionLinks"
+                                                        ng-class="{ disabled : pagination.current == pagination.last }"
+                                                        class="ng-scope">
+                                                        <a href="" ng-click="setCurrent(pagination.current + 1)" class="ng-binding">›</a>
+                                                    </li>
+                                                    <li ng-if="boundaryLinks"
+                                                        ng-class="{ disabled : pagination.current == pagination.last }">
+                                                        <a href="" ng-click="setCurrent(pagination.last)">&raquo;</a>
+                                                    </li>
+                                                </ul>
+                                              </dir-pagination-controls>
+                                        </div>
+                                  </div>
+                            </div>
+                        </div>
+                        <!-- /.container-fluid -->
+
+                    <!--</div>-->
+
+                    </div>
+                    <!-- /#page-wrapper -->
+
+                </div>
+                    </div>
+                    </div>
+                <!-- /#wrapper -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->
+
+<!-- Add Modal -->
+<div id="addSchModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add School</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-school" name="schform" novalidate="">
+                    {% input_text name='schname' ngmodel='sch.schname' classname='form-control' placename='School Name' fieldname='School Name' formname='schform' type='text' %}
+                    {% input_text name='schaddr' ngmodel='sch.schaddr' classname='form-control' placename='School Address' fieldname='School Address' formname='schform' type='text' %}
+                    {% input_text name='schlevel' ngmodel='sch.schlevel' classname='form-control' placename='School Level' fieldname='School Level' formname='schform' type='text' %}
+                    {% input_text name='schcode' ngmodel='sch.schcode' classname='form-control' placename='School code' fieldname='School code' formname='schform' type='text' %}
+                    <div class="form-group">
+                        <label for="zone">Zone</label>
+                        <select class="form-control" id="zone" ng-model="sch.zone" name="zone" required>
+                            <option value="">Select the Zone</option>
+                            <option ng-repeat="zo in zonelist" value="{$ zo.pk $}">{$ zo.fields.name $}</option>
+                        </select>
+                        <span ng-show="zone.$submitted || schform.zone.$touched"><span ng-show="schform.zone.$error.required">* Zone Required</span>
+                        </span>
+                    </div>
+                    <button ng-click="addSchool(sch)" ng-disabled="schform.$invalid" class="btn btn-default">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="schform.$setPristine();vmfrom.$setUntouched();schform.$submitted = false;">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Edit Modal -->
+<script type="text/ng-template" id="schEditModal.html">
+    <div  click-outside="cancel()">
+        <div class="modal-header">
+            <h4 class="modal-title">Edit School</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-sch" name="scheditform" novalidate="">
+                {% input_text name='eschname' ngmodel='editSch.name' classname='form-control' placename='School Name' fieldname='School Name' formname='scheditform' type='text' %}
+                {% input_text name='eschaddr' ngmodel='editSch.address' classname='form-control' placename='School Address' fieldname='School Address' formname='scheditform' type='text' %}
+                {% input_text name='eschlevel' ngmodel='editSch.level' classname='form-control' placename='School Level' fieldname='School Level' formname='scheditform' type='text' %}
+                {% input_text name='eschcode' ngmodel='editSch.code' classname='form-control' placename='School code' fieldname='School code' formname='scheditform' type='text' %}
+
+                <div class="form-group">
+                    <label for="ezone">Credentials</label>
+                    <select class="form-control" id="ezone" name="ezone" ng-model="editSch.zone_id" ng-options="zone_id.pk as zone_id.fields.name for zone_id in zone" required>
+                            <option value="">Select the Zone</option>
+                            <option ng-repeat="zo in zone" value="{$ zo.pk $}">{$ zo.fields.name $}</option>
+                    </select>
+                    <span ng-show="ezone.$submitted || scheditform.ezone.$touched"><span ng-show="scheditform.ezone.$error.required">* Zone Required</span></span>
+                </div>
+                <button ng-click="updateSch(editSch);editSch.reset()" ng-disabled="scheditform.$invalid" class="btn btn-default">Update</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+        </div>
+    </div>
+</script>
+</span>
+{% endblock %}

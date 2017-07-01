@@ -1,0 +1,4 @@
+<label for="{{name}}">{{fieldname}}</label>
+<input type="{{type}}" id="{{name}}" ng-model="{{ngmodel}}" name="{{name}}" class="{{classname}}" placeholder="{{placename}}" required="">
+<span id="span_{{name}}" ng-show="{{formname}}.$submitted || {{formname}}.{{name}}.$touched"><div ng-show="{{formname}}.{{name}}.$error.required">* {{fieldname}} Required</div></span>
+<br/>
