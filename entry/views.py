@@ -70,8 +70,9 @@ def delZone(request):
 
 def getSchool(request):
     if request.method == 'GET':
-        sch_data = school.objects.all().order_by('-id')
-        schools = serializers.serialize('json',sch_data)
+        # sch_data = school.objects.all().order_by('-id')
+        sch_data = school.objects.all().select_related("zone").order_by('-id')
+        schools = serializers.serialize('json',sch_data,use_natural_foreign_keys=True)
         return HttpResponse(schools, content_type='application/json')
 
 def addSchool(request):
@@ -81,7 +82,7 @@ def addSchool(request):
         addr = data.get('schaddr')
         level = data.get('schlevel')
         code = data.get('schcode')
-        zid = data.get('zone')
+        zid = int(data.get('zone'))
         addSchool = school(name=name, address=addr, level=level, code=code, zone_id=zid)
         addSchool.save()
         if addSchool:
@@ -123,18 +124,27 @@ def delSchool(request):
         data = json.loads(request.body.decode('utf-8'))
         ids = json.loads(data.get('id'))
         for id in ids:
-            delser = school.objects.filter(id=id).delete()
-        if delser:
+            delsch = school.objects.filter(id=id).delete()
+        if delsch:
             return HttpResponse('Success')
         else:
             return HttpResponse('Failed')
     else:
         return HttpResponse('Invalid Method')
 
+def getSchoolbasezid(request):
+    if request.method == 'GET':
+        z_id=request.GET.get('zid')
+        schname_obj = school.objects.filter(zone_id=z_id)
+        schbz=serializers.serialize('json', schname_obj)
+        return HttpResponse(schbz,content_type='application/json')
+    else:
+        return HttpResponse('Invalid Method')
+
 def getStudent(request):
     if request.method == 'GET':
-        stu_data = student.objects.all().order_by('-id')
-        stu = serializers.serialize('json', stu_data)
+        stu_data = student.objects.all().select_related("school").order_by('-id')
+        stu = serializers.serialize('json', stu_data,use_natural_foreign_keys=True)
         return HttpResponse(stu, content_type='application/json')
     else:
         return HttpResponse('Invalid Method')
@@ -143,14 +153,21 @@ def addStudent(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         name = data.get('name')
-        stu_id = data.get('city')
-        standard = data.get('city')
-        dob = data.get('city')
-        gender = data.get('city')
-        address = data.get('city')
-        emergency_contact = data.get('city')
-        school_id = data.get('city')
-        addstu = student(name=name, stu_id=stu_id, standard=standard,dob=dob,gender=gender,address=address,emergency_contact=emergency_contact,school_id=school_id)
+        stu_id = data.get('sid')
+        standard = data.get('class')
+        z_id = data.get('stzone')
+        sch_id=data.get('stuschl')
+        dob = data.get('dob')
+        gender = data.get('gender')
+        address = data.get('addr')
+        contact_num = data.get('phone')
+        fname = data.get('fname')
+        foccup = data.get('foccup')
+        mname = data.get('mname')
+        moccup = data.get('moccup')
+        bnk_accno = data.get('bnkaccno')
+        insurance_no = data.get('insno')
+        addstu = student(name=name, stu_id=stu_id, standard=standard,zone_id=z_id,school_id=sch_id,dob=dob,gender=gender,address=address,contact_num=contact_num,father_name=fname,father_occupation=foccup,mother_name=mname,mother_occupation=moccup,bnk_accno=bnk_accno,insurance_no=insurance_no)
         addstu.save()
         if addstu:
             return HttpResponse("Success")
@@ -162,11 +179,23 @@ def addStudent(request):
 def editStudent(request):
     if request.method == 'POST':
         edata = json.loads(request.body.decode('utf-8'))
-        z_id = int(edata.get('eid'))
-        data = edata.get('editzone')
+        stu_id = int(edata.get('eid'))
+        data = edata.get('editstu')
         ed_name = data.get('name')
-        ed_city = data.get('city')
-        edStu = student.objects.filter(id=z_id).update(name=ed_name, city=ed_city)
+        standard = data.get('standard')
+        z_id = data.get('zone_id')
+        sch_id = data.get('school_id')
+        dob = data.get('dob')
+        gender = data.get('gender')
+        address = data.get('address')
+        contact_num = data.get('contact_num')
+        fname = data.get('father_name')
+        foccup = data.get('father_occupation')
+        mname = data.get('mother_name')
+        moccup = data.get('mother_occupation')
+        bnk_accno = data.get('bnk_accno')
+        insurance_no = data.get('insurance_no')
+        edStu = student.objects.filter(id=stu_id).update(name=ed_name, stu_id=stu_id, standard=standard,zone_id=z_id,school_id=sch_id,dob=dob,gender=gender,address=address,contact_num=contact_num,father_name=fname,father_occupation=foccup,mother_name=mname,mother_occupation=moccup,bnk_accno=bnk_accno,insurance_no=insurance_no)
         if edStu:
             return HttpResponse('Success')
         else:
@@ -196,4 +225,3 @@ def delStudent(request):
             return HttpResponse('Failed')
     else:
         return HttpResponse('Invalid Method')
-
