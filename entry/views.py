@@ -1,9 +1,13 @@
-from django.shortcuts import render
-from entry.models import school,zone,student
-from datetime import datetime
 import json
+
 from django.core import serializers
 from django.http import HttpResponse
+from django.shortcuts import render
+
+from entry.models import school,zone,student
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from entry.serializers import  UserSerializer, GroupSerializer
 
 def zones(request):
     return render(request, 'entry/data.html')
@@ -197,3 +201,17 @@ def delStudent(request):
     else:
         return HttpResponse('Invalid Method')
 
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
