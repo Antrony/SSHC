@@ -41,7 +41,7 @@
                                     <table class="table table-bordered table-responsive table-hover tableNewStyles" ng-init="getZone()">
                                         <thead>
                                         <tr>
-                                            <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check"/></th>
+                                            <th><input type="checkbox" ng-click="zonetoggleAll(iszoAllSelected.check)" ng-model="iszoAllSelected.check"/></th>
                                             <th>Name</th>
                                             <th>City</th>
                                         </tr>
@@ -115,7 +115,7 @@
                                     <table class="table table-bordered table-responsive table-hover tableNewStyles" ng-init="getSchool()">
                                         <thead>
                                         <tr>
-                                            <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check" /></th>
+                                            <th><input type="checkbox" ng-click="schtoggleAll(isschAllSelected.check)" ng-model="isschAllSelected.check" /></th>
                                             <th>Name</th>
                                             <th>Address</th>
                                             <th>Level</th>
@@ -128,9 +128,11 @@
                                             <td><input type="checkbox" ng-model="sch.selected" ng-change="optionToggled(schlist)" value="{$ sch.id $}" /></td>
                                             <td>{$ sch.fields.name $}</td>
                                             <td>{$ sch.fields.address $}</td>
-                                            <td>{$ sch.fields.level $}</td>
+                                            <td ng-if="sch.fields.level == 0">Secondary</td>
+                                            <td ng-if="sch.fields.level == 1">Higher Secondary</td>
+                                            <td ng-if="sch.fields.level == 2">Corporation</td>
                                             <td>{$ sch.fields.code $}</td>
-                                            <td>{$ sch.fields.zone_id $}</td>
+                                            <td>{$ sch.fields.zone $}</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -195,27 +197,41 @@
                                     <table class="table table-bordered table-responsive table-hover tableNewStyles" ng-init="getStudent()">
                                         <thead>
                                         <tr>
-                                            <th><input type="checkbox" ng-click="toggleAll(isAllSelected.check)" ng-model="isAllSelected.check" /></th>
+                                            <th><input type="checkbox" ng-click="stutoggleAll(isstuAllSelected.check)" ng-model="isstuAllSelected.check" /></th>
                                             <th>Name</th>
                                             <th>Student ID</th>
                                             <th>Class</th>
+                                            <th>School Name</th>
                                             <th>D.O.B</th>
                                             <th>Gender</th>
                                             <th>Address</th>
-                                            <th>Emergency Contact</th>
-                                            <th>School</th>
+                                            <th>Contact Number</th>
+                                            <th>Father Name</th>
+                                            <th>Father Occupation</th>
+                                            <th>Mother Name</th>
+                                            <th>Mother Occupation</th>
+                                            <th>Bank Account Number</th>
+                                            <th>Insurance Number</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr dir-paginate="stu in stulist | filter:q | itemsPerPage: stupageSize" current-page="currentPage" pagination-id="stuPagination">
-                                            <td><input type="checkbox" ng-model="sch.selected" ng-change="optionToggled(stulist)" value="{$ stu.id $}" /></td>
+                                            <td><input type="checkbox" ng-model="stu.selected" ng-change="optionToggled(stulist)" value="{$ stu.id $}" /></td>
                                             <td>{$ stu.fields.name $}</td>
                                             <td>{$ stu.fields.stu_id $}</td>
                                             <td>{$ stu.fields.standard $}</td>
-                                            <td>{$ stu.fields.dob $}</td>
-                                            <td>{$ stu.fields.gender $}</td>
-                                            <td>{$ stu.fields.emergency_contact $}</td>
-                                            <td>{$ stu.fields.school_id $}</td>
+                                            <td>{$ stu.fields.school $}</td>
+                                            <td>{$ stu.fields.dob|date:"dd/MM/yyyy" $}</td>
+                                            <td ng-if="stu.fields.gender == 0">Male</td>
+                                            <td ng-if="stu.fields.gender == 1">Female</td>
+                                            <td>{$ stu.fields.address $}</td>
+                                            <td>{$ stu.fields.contact_num $}</td>
+                                            <td>{$ stu.fields.father_name $}</td>
+                                            <td>{$ stu.fields.father_occupation $}</td>
+                                            <td>{$ stu.fields.mother_name $}</td>
+                                            <td>{$ stu.fields.mother_occupation $}</td>
+                                            <td>{$ stu.fields.bnk_accno $}</td>
+                                            <td>{$ stu.fields.insurance_no $}</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -327,7 +343,18 @@
                 <form class="form-school" name="schform" novalidate="">
                     {% input_text name='schname' ngmodel='sch.schname' classname='form-control' placename='School Name' fieldname='School Name' formname='schform' type='text' %}
                     {% input_text name='schaddr' ngmodel='sch.schaddr' classname='form-control' placename='School Address' fieldname='School Address' formname='schform' type='text' %}
-                    {% input_text name='schlevel' ngmodel='sch.schlevel' classname='form-control' placename='School Level' fieldname='School Level' formname='schform' type='text' %}
+                     <div class="form-group">
+                        <label for="schlevel">School Level</label>
+                        <select class="form-control" id="schlevel" ng-model="sch.schlevel" name="schlevel" required>
+                            <option value="">Select the School Level</option>
+                            <option value=0>Secondary</option>
+                            <option value=1>Higher Secondary</option>
+                            <option value=2>Corparotion</option>
+                        </select>
+                        <span ng-show="schlevel.$submitted || schform.schlevel.$touched"><span ng-show="schform.schlevel.$error.required">* School Level Required</span>
+                        </span>
+                    </div>
+                    <!--{% input_text name='schlevel' ngmodel='sch.schlevel' classname='form-control' placename='School Level' fieldname='School Level' formname='schform' type='text' %}-->
                     {% input_text name='schcode' ngmodel='sch.schcode' classname='form-control' placename='School code' fieldname='School code' formname='schform' type='text' %}
                     <div class="form-group">
                         <label for="zone">Zone</label>
@@ -362,7 +389,7 @@
                 {% input_text name='eschcode' ngmodel='editSch.code' classname='form-control' placename='School code' fieldname='School code' formname='scheditform' type='text' %}
 
                 <div class="form-group">
-                    <label for="ezone">Credentials</label>
+                    <label for="ezone">Zone</label>
                     <select class="form-control" id="ezone" name="ezone" ng-model="editSch.zone_id" ng-options="zone_id.pk as zone_id.fields.name for zone_id in zone" required>
                             <option value="">Select the Zone</option>
                             <option ng-repeat="zo in zone" value="{$ zo.pk $}">{$ zo.fields.name $}</option>
@@ -378,7 +405,7 @@
     </div>
 </script>
 
-<!-- Add Zone Modal -->
+<!-- Add Student Modal -->
 <div id="addStuModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
 
@@ -392,23 +419,54 @@
                     {% input_text name='name' ngmodel='stu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stuform' type='text' %}
                     {% input_text name='sid' ngmodel='stu.sid' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stuform' type='text' %}
                     {% input_text name='class' ngmodel='stu.class' classname='form-control' placename='Student Class' fieldname='Student Class' formname='stuform' type='text' %}
-                    {% input_text name='dob' ngmodel='stu.dob' classname='form-control' placename='Date of Birth' fieldname='Date of Birth' formname='stuform' type='text' %}
                     <div class="form-group">
-                        <label>Gender</label>
-                        <input type="radio" ng-model="stu.gender" value=0> Male
-                        <input type="radio" ng-model="stu.gender" value=1> Female
-                      </label><br/>
+                        <label for="zone">Zone</label>
+                        <select class="form-control" id="stzone" ng-model="stu.stzone" data-ng-change="getschbasezid(stu.stzone)" name="stzone" required>
+                            <option value="">Select the Zone</option>
+                            <option ng-repeat="zo in zonelist" value="{$ zo.pk $}" >{$ zo.fields.name $}</option>
+                        </select>
+                        <span ng-show="stzone.$submitted || stuform.stzone.$touched"><span ng-show="stuform.stzone.$error.required">* Zone Required</span>
+                        </span>
                     </div>
-                    {% input_text name='name' ngmodel='stu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stuform' type='text' %}
-                    {% input_text name='sid' ngmodel='stu.sid' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stuform' type='text' %}
-                    {% input_text name='name' ngmodel='stu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stuform' type='text' %}
-                    {% input_text name='sid' ngmodel='stu.sid' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stuform' type='text' %}
-
+                     <div class="form-group">
+                        <label for="zone">School</label>
+                        <select class="form-control" id="stuschl" ng-model="stu.stuschl" name="stuschl" required>
+                            <option value="">Select the School</option>
+                            <option ng-repeat="sch in schbzlist" value="{$ sch.pk $}">{$ sch.fields.name $}</option>
+                        </select>
+                        <span ng-show="stuschl.$submitted || stuform.stuschl.$touched"><span ng-show="stuform.stuschl.$error.required">* School Required</span>
+                        </span>
+                    </div>
+                    {% input_text name='dob' ngmodel='stu.dob' classname='form-control' placename='Date of Birth' fieldname='Date of Birth' formname='stuform' type='date' %}
+                    <div class="form-group">
+                        <label>Gender</label><br>
+                            <input type="radio" classname='form-control' ng-model="stu.gender" value="0" ng-required="!stu.gender"> Male
+                            <input type="radio" classname='form-control' ng-model="stu.gender" value="1" ng-required="!stu.gender"> Female
+                        <span ng-show="gender.$submitted || stuform.gender.$touched"><span ng-show="stuform.gender.$error.required">* Student Gender Required</span></span>
+                    </div>
+                    <div class="form-group">
+                    <label for="stuaddr">Student Address</label><br>
+                        <textarea id="stuaddr" classname='form-control' placeholder="No.13, Dr.NRN Layout, &#10;Pappanaicken Palayam, &#10;Coimbatore - 641 037, &#10;Tamil Nadu, INDIA" name="stuaddr" rows="7" cols="50" ng-model="stu.addr" required></textarea>
+                        <br>
+                        <span ng-show="stuaddr.$submitted || stuform.stuaddr.$touched"><span ng-show="stuform.stuaddr.$error.required">* Student Address Required</span></span>
+                    </div>
+                     <div class="form-group">
+                    <label for="phone">Contact Number</label><br>
+                    <input type="number" id="phone" classname="form-control" ng-model="stu.phone" name="phone" ng-pattern="/^[7-9][0-9]{9}$/" required><br>
+                         <span ng-show="stuform.phone.$error.pattern">Please enter valid number!</span>
+                         <span ng-show="phone.$submitted || stuform.phone.$touched"><span ng-show="stuform.phone.$error.required">* Phone Number Required</span></span>
+                     </div>
+                    {% input_text name='fname' ngmodel='stu.fname' classname='form-control' placename='Father Name' fieldname='Father Name' formname='stuform' type='text' %}
+                    {% input_text name='foccup' ngmodel='stu.foccup' classname='form-control' placename='Father Occupation' fieldname='Father Occupation' formname='stuform' type='text' %}
+                    {% input_text name='mname' ngmodel='stu.mname' classname='form-control' placename='Mother Name' fieldname='Mother Name' formname='stuform' type='text' %}
+                    {% input_text name='moccup' ngmodel='stu.moccup' classname='form-control' placename='Mother Occupation' fieldname='Mother Occupation' formname='stuform' type='text' %}
+                    {% input_text name='bnkaccno' ngmodel='stu.bnkaccno' classname='form-control' placename='Bank Account Number' fieldname='Bank Account Number' formname='stuform' type='number' %}
+                    {% input_text name='insno' ngmodel='stu.insno' classname='form-control' placename='Insurance Number' fieldname='Insurance Number' formname='stuform' type='number' %}
                     <button ng-click="addStudent(stu)" ng-disabled="stuform.$invalid" class="btn btn-default">Save</button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="zoneform.$setPristine();zoneform.$setUntouched();zoneform.$submitted = false;">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stuform.$setPristine();stuform.$setUntouched();stuform.$submitted = false;">Close</button>
             </div>
         </div>
 
@@ -419,13 +477,63 @@
 <script type="text/ng-template" id="stuEditModal">
     <div  click-outside="cancel()">
         <div class="modal-header">
-            <h4 class="modal-title">Edit Zone</h4>
+            <h4 class="modal-title">Edit Student</h4>
         </div>
         <div class="modal-body">
-            <form class="form-sch" name="zoneeditform" novalidate="">
-                {% input_text name='ezonename' ngmodel='editZone.name' classname='form-control' placename='Zone Name' fieldname='Zone Name' formname='zoneeditform' type='text' %}
-                {% input_text name='ezonecity' ngmodel='editZone.city' classname='form-control' placename='City' fieldname='City' formname='zoneeditform' type='text' %}
-                <button ng-click="updateZone(editZone);editZone.reset()" ng-disabled="zoneeditform.$invalid" class="btn btn-default">Update</button>
+            <form class="form-school" name="stueditform" novalidate="">
+                {% input_text name='name' ngmodel='editStu.name' classname='form-control' placename='Student Name' fieldname='Student Name' formname='stueditform' type='text' %}
+                {% input_text name='sid' ngmodel='editStu.stu_id' classname='form-control' placename='Student ID' fieldname='Student ID' formname='stueditform' type='text' %}
+                {% input_text name='class' ngmodel='editStu.standard' classname='form-control' placename='Student Class' fieldname='Student Class' formname='stueditform' type='text' %}
+                <div class="form-group">
+                    <label for="zone">Zone</label>
+                    <select class="form-control" id="edstzone" ng-model="editStu.zone_id" data-ng-change="getschbasezid(editStu.edstzone)" name="edstzone" ng-options="zone_id.pk as zone_id.fields.name for zone_id in zone" required>
+                        <option value="">Select the Zone</option>
+                        <option ng-repeat="zo in zonelist" value="{$ zo.pk $}" >{$ zo.fields.name $}</option>
+                    </select>
+                    <span ng-show="edstzone.$submitted || stueditform.edstzone.$touched"><span ng-show="stueditform.edstzone.$error.required">* Zone Required</span>
+                    </span>
+                </div>
+                 <div class="form-group">
+                    <label for="zone">School</label>
+                    <select class="form-control" id="edstuschl" ng-model="editStu.school_id" name="edstuschl" ng-options="school_id.pk as school_id.fields.name for school_id in school" required>
+                        <option value="">Select the School</option>
+                        <option ng-repeat="sch in schbzlist" value="{$ sch.pk $}">{$ sch.fields.name $}</option>
+                    </select>
+                    <span ng-show="edstuschl.$submitted || stueditform.edstuschl.$touched"><span ng-show="stueditform.edstuschl.$error.required">* School Required</span>
+                    </span>
+                </div>
+                <div class="form-group">
+                <label for="phone">Date of Birth</label><br>
+                    {$ editStu.dob | date : 'dd/MM/yyyy' $}
+                <input type="date" id="eddob" classname="form-control" 8 ng-model="editStu.dob" name="eddob" required><br>
+                     <span ng-show="eddob.$submitted || stueditform.eddob.$touched"><span ng-show="stueditform.eddob.$error.required">* Date of Birth Required</span></span>
+                 </div>
+                <!--{% input_text name='dob' ngmodel='editStu.dob' classname='form-control' placename='Date of Birth' fieldname='Date of Birth' formname='stueditform' type='date' %}-->
+                <div class="form-group">
+                    <label>Gender</label><br>
+                        <input type="radio" classname='form-control' ng-model="editStu.gender" ng-value="0" ng-required="!stu.gender"> Male
+                        <input type="radio" classname='form-control' ng-model="editStu.gender" ng-value="1" ng-required="!stu.gender"> Female
+                    <span ng-show="gender.$submitted || stueditform.gender.$touched"><span ng-show="stueditform.gender.$error.required">* Student Gender Required</span></span>
+                </div>
+                <div class="form-group">
+                <label for="stuaddr">Student Address</label><br>
+                    <textarea id="edstuaddr" classname='form-control' placeholder="No.13, Dr.NRN Layout, &#10;Pappanaicken Palayam, &#10;Coimbatore - 641 037, &#10;Tamil Nadu, INDIA" name="stuaddr" rows="7" cols="50" ng-model="editStu.address" required></textarea>
+                    <br>
+                    <span ng-show="edstuaddr.$submitted || stueditform.edstuaddr.$touched"><span ng-show="stueditform.edstuaddr.$error.required">* Student Address Required</span></span>
+                </div>
+                 <div class="form-group">
+                <label for="phone">Contact Number</label><br>
+                <input type="number" id="edphone" classname="form-control" ng-model="editStu.contact_num" name="edphone" ng-pattern="/^[7-9][0-9]{9}$/" required><br>
+                     <span ng-show="stueditform.edphone.$error.pattern">Please enter valid number!</span>
+                     <span ng-show="edphone.$submitted || stueditform.edphone.$touched"><span ng-show="stueditform.edphone.$error.required">* Phone Number Required</span></span>
+                 </div>
+                {% input_text name='fname' ngmodel='editStu.father_name' classname='form-control' placename='Father Name' fieldname='Father Name' formname='stueditform' type='text' %}
+                {% input_text name='foccup' ngmodel='editStu.father_occupation' classname='form-control' placename='Father Occupation' fieldname='Father Occupation' formname='stueditform' type='text' %}
+                {% input_text name='mname' ngmodel='editStu.mother_name' classname='form-control' placename='Mother Name' fieldname='Mother Name' formname='stueditform' type='text' %}
+                {% input_text name='moccup' ngmodel='editStu.mother_occupation' classname='form-control' placename='Mother Occupation' fieldname='Mother Occupation' formname='stueditform' type='text' %}
+                {% input_text name='bnkaccno' ngmodel='editStu.bnk_accno' classname='form-control' placename='Bank Account Number' fieldname='Bank Account Number' formname='stueditform' type='number' %}
+                {% input_text name='insno' ngmodel='editStu.insurance_no' classname='form-control' placename='Insurance Number' fieldname='Insurance Number' formname='stueditform' type='number' %}
+                <button ng-click="updateStu(editStu);editStu.reset()" ng-disabled="stueditform.$invalid" class="btn btn-default">Save</button>
             </form>
         </div>
         <div class="modal-footer">

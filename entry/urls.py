@@ -22,8 +22,13 @@ urlpatterns = [
     url(r'^data/editschool/$', views.editSchool, name='editschool'),
     url(r'^data/getschbid/$',views.getSchbaseID,name='getschbid'),
     url(r'^data/delschool/$',views.delSchool,name='delschool'),
+    url(r'^data/getschbzid/$',views.getSchoolbasezid,name='getschbzid'),
 
     url(r'^data/getstudent/$', views.getStudent, name='getstudent'),
+    url(r'^data/addstudent/$', views.addStudent, name='addstudent'),
+    url(r'^data/editstudent/$', views.editStudent, name='editstudent'),
+    url(r'^data/getstubid/$', views.getStubaseID, name='getstubid'),
+    url(r'^data/delstudent/$', views.delStudent, name='delstudent'),
 
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
