@@ -20,9 +20,11 @@
                         <div id="zones" class="tab-pane fade in active">
                             <div class="row MarginTopStyle">
                                 <div class="col-lg-6">
+                                {% if user.is_authenticated %}
                                     <button type="button" data-toggle="modal"  data-target="#addZoneModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
                                     <button ng-if="zonelist.length != '0'" type="button" class="btn btn-primary" ng-click="openZoneModal()"><i class="fa fa-edit"></i> Edit</button>
                                     <button ng-if="zonelist.length != '0'" type="button" class="btn btn-danger" ng-click="delZone()"><i class="fa fa-trash"></i> Delete</button>
+                                {% endif %}
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="pull-right">
@@ -94,9 +96,11 @@
                         <div id="school" class="tab-pane fade">
                             <div class="row MarginTopStyle">
                                 <div class="col-lg-6">
+                                    {% if user.is_authenticated %}
                                     <button type="button" data-toggle="modal"  data-target="#addSchModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
                                     <button ng-if="schlist.length != '0'" type="button" class="btn btn-primary" ng-click="openSchModal()"><i class="fa fa-edit"></i> Edit</button>
                                     <button ng-if="schlist.length != '0'" type="button" class="btn btn-danger" ng-click="delSchool()"><i class="fa fa-trash"></i> Delete</button>
+                                    {% endif %}
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="pull-right">
@@ -176,9 +180,11 @@
                         <div id="student" class="tab-pane fade">
                             <div class="row MarginTopStyle">
                                 <div class="col-lg-6">
+                                    {% if user.is_authenticated %}
                                     <button type="button" data-toggle="modal"  data-target="#addStuModal" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
                                     <button ng-if="stulist.length != '0'" type="button" class="btn btn-primary" ng-click="openStuModal()"><i class="fa fa-edit"></i> Edit</button>
                                     <button ng-if="stulist.length != '0'" type="button" class="btn btn-danger" ng-click="delStudent()"><i class="fa fa-trash"></i> Delete</button>
+                                    {% endif %}
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="pull-right">
