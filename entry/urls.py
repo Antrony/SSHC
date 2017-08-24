@@ -5,10 +5,11 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'zones', views.GroupViewSet)
+router.register(r'zones', views.ZoneViewSet)
 
 
 urlpatterns = [
+    url(r'^$', views.intro, name='intro'),
     url(r'^data/$', views.zones, name='data'),
 
     url(r'^data/getzone/$', views.getZone, name='getzone'),
@@ -30,6 +31,6 @@ urlpatterns = [
     url(r'^data/getstubid/$', views.getStubaseID, name='getstubid'),
     url(r'^data/delstudent/$', views.delStudent, name='delstudent'),
 
-    url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api/', include(router.urls)),
+    url(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
